@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Farmer Dashboard - AgriConnect MVP{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-tractor me-2 text-success"></i>Farmer Dashboard</h2>
+                    <p class="text-muted">Welcome back, {{ current_user.full_name }}</p>
+                </div>
+                <a href="{{ url_for('add_product') }}" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Add New Product
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">{{ products|length }}</h5>
+                            <p class="card-text">Total Products</p>
+                        </div>
+                        <i class="fas fa-box fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">{{ offers|length }}</h5>
+                            <p class="card-text">Pending Offers</p>
+                        </div>
+                        <i class="fas fa-handshake fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">{{ orders|length }}</h5>
+                            <p class="card-text">Recent Orders</p>
+                        </div>
+                        <i class="fas fa-clipboard-list fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">₹{{ "%.2f"|format(orders|sum(attribute='total_amount')|float) }}</h5>
+                            <p class="card-text">Total Revenue</p>
+                        </div>
+                        <i class="fas fa-dollar-sign fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Products Section -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>My Products</h5>
+                    <a href="{{ url_for('add_product') }}" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus me-1"></i>Add Product
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if products %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in products[:10] %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if product.image_path %}
+                                                    <img src="{{ url_for('uploaded_file', filename=product.image_path) }}" 
+                                                         class="rounded me-2" width="40" height="40" 
+                                                         style="object-fit: cover;">
+                                                {% else %}
+                                                    <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center"
+                                                         style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-image text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-bold">{{ product.name }}</div>
+                                                    <small class="text-muted">{{ product.description[:50] }}{% if product.description|length > 50 %}...{% endif %}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold text-success">₹{{ "%.2f"|format(product.price) }}</span>
+                                            <small class="text-muted">/ {{ product.unit }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="{{ 'text-success' if product.quantity > 10 else 'text-warning' if product.quantity > 0 else 'text-danger' }}">
+                                                {{ product.quantity }} {{ product.unit }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ product.category }}</span>
+                                        </td>
+                                        <td>
+                                            {% if product.is_available %}
+                                                <span class="badge bg-success">Available</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Unavailable</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                                                   class="btn btn-outline-primary" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('edit_product', product_id=product.id) }}" 
+                                                   class="btn btn-outline-warning" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-outline-danger delete-product-btn" 
+                                                        data-product-id="{{ product.id }}" 
+                                                        data-product-name="{{ product.name }}" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if products|length > 10 %}
+                            <div class="text-center mt-3">
+                                <small class="text-muted">Showing first 10 products</small>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No products yet</h5>
+                            <p class="text-muted">Start selling by adding your first product!</p>
+                            <a href="{{ url_for('add_product') }}" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Add Your First Product
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Offers -->
+        <div class="col-lg-4">
+            <!-- Recent Offers -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-handshake me-2"></i>Recent Offers</h6>
+                    <a href="{{ url_for('offers') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if offers %}
+                        {% for offer in offers[:5] %}
+                            <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">{{ offer.product.name }}</div>
+                                    <small class="text-muted">
+                                        {{ offer.consumer.full_name }} • {{ offer.quantity }} {{ offer.product.unit }}
+                                    </small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-warning">₹{{ "%.2f"|format(offer.offered_price) }}/{{ offer.product.unit }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    {% if offer.status == 'pending' %}
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-success respond-offer-btn" 
+                                                    data-offer-id="{{ offer.id }}" data-action="accept">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-danger respond-offer-btn" 
+                                                    data-offer-id="{{ offer.id }}" data-action="reject">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-{{ 'success' if offer.status == 'accepted' else 'danger' }}">
+                                            {{ offer.status.title() }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-3">
+                            <i class="fas fa-handshake fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No offers yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Recent Orders</h6>
+                    <a href="{{ url_for('orders') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if orders %}
+                        {% for order in orders[:5] %}
+                            <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                                <div>
+                                    <div class="fw-bold">{{ order.product.name }}</div>
+                                    <small class="text-muted">
+                                        {{ order.consumer.full_name }} • {{ order.quantity }} {{ order.product.unit }}
+                                    </small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-success">₹{{ "%.2f"|format(order.total_amount) }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-{{ 'success' if order.status == 'delivered' else 'primary' if order.status == 'confirmed' else 'warning' }}">
+                                        {{ order.status.title() }}
+                                    </span>
+                                    <div><small class="text-muted">{{ order.created_at.strftime('%m/%d') }}</small></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-3">
+                            <i class="fas fa-clipboard-list fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No orders yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Import functions from main.js
+    const { showAlert, getCSRFToken } = window.AgriConnect || {};
+    
+    // Delete product functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.delete-product-btn');
+        
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const productId = this.dataset.productId;
+                const productName = this.dataset.productName;
+                
+                if (confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+                    fetch(`{{ url_for('delete_product', product_id=0) }}`.replace('0', productId), {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCSRFToken()
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showAlert('success', data.message);
+                            // Remove the row from table
+                            this.closest('tr').remove();
+                        } else {
+                            showAlert('error', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        showAlert('error', 'Error deleting product');
+                    });
+                }
+            });
+        });
+
+        // Respond to offer functionality
+        const respondButtons = document.querySelectorAll('.respond-offer-btn');
+        
+        respondButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const offerId = this.dataset.offerId;
+                const action = this.dataset.action;
+                
+                fetch(`{{ url_for('respond_to_offer', offer_id=0, action='accept') }}`.replace('0', offerId).replace('accept', action), {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('success', data.message);
+                        location.reload(); // Reload to update the UI
+                    } else {
+                        showAlert('error', data.message);
+                    }
+                })
+                .catch(error => {
+                    showAlert('error', 'Error responding to offer');
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
