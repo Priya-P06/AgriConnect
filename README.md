@@ -241,9 +241,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact 📧
 
-Project Link:[ [https://github.com/yourusername/agri_connect_mvp](https://github.com/yourusername/agri_connect_mvp)](https://agriconnect-neon.vercel.app/)
+Project Link:https://agriconnect-neon.vercel.app/
 
 ---
 
 **Built with ❤️ for farmers and consumers**
+
 
