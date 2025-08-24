@@ -241,11 +241,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact 📧
 
-Project Link:[https://github.com/yourusername/agri_connect_mvp](https://github.com/yourusername/agri_connect_mvp)
+Project Link:[[https://github.com/yourusername/agri_connect_mvp](https://github.com/yourusername/agri_connect_mvp)](https://agriconnect-8u4n3mcne-priyas-projects-d53cfbf8.vercel.app)
 
 ---
 
 **Built with ❤️ for farmers and consumers**
+
 
 
 
