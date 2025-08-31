@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found - AgriConnect MVP{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="error-content">
+                    <div class="error-icon mb-4">
+                        <i class="fas fa-seedling fa-5x text-muted"></i>
+                    </div>
+                    
+                    <h1 class="display-1 fw-bold text-success mb-3">404</h1>
+                    <h3 class="fw-bold mb-3">Oops! Page Not Found</h3>
+                    <p class="lead text-muted mb-4">
+                        The page you're looking for seems to have gotten lost in the fields. 
+                        Don't worry, we'll help you get back on track!
+                    </p>
+                    
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{{ url_for('index') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-home me-2"></i>Go Home
+                        </a>
+                        <a href="{{ url_for('product_list') }}" class="btn btn-outline-success btn-lg">
+                            <i class="fas fa-shopping-basket me-2"></i>Browse Products
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <h5 class="text-muted mb-3">Need help? Try these popular sections:</h5>
+                <div class="row justify-content-center">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card h-100 border-0">
+                            <div class="card-body text-center">
+                                <i class="fas fa-tractor fa-2x text-success mb-3"></i>
+                                <h6>For Farmers</h6>
+                                <p class="text-muted small">Sell your fresh produce</p>
+                                {% if not current_user.is_authenticated %}
+                                    <a href="{{ url_for('register') }}" class="btn btn-sm btn-outline-success">Join Now</a>
+                                {% elif current_user.role == 'farmer' %}
+                                    <a href="{{ url_for('farmer_dashboard') }}" class="btn btn-sm btn-outline-success">Dashboard</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card h-100 border-0">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shopping-cart fa-2x text-success mb-3"></i>
+                                <h6>For Consumers</h6>
+                                <p class="text-muted small">Buy fresh produce</p>
+                                {% if not current_user.is_authenticated %}
+                                    <a href="{{ url_for('register') }}" class="btn btn-sm btn-outline-success">Join Now</a>
+                                {% elif current_user.role == 'consumer' %}
+                                    <a href="{{ url_for('consumer_cart') }}" class="btn btn-sm btn-outline-success">My Cart</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card h-100 border-0">
+                            <div class="card-body text-center">
+                                <i class="fas fa-handshake fa-2x text-success mb-3"></i>
+                                <h6>Offers & Deals</h6>
+                                <p class="text-muted small">Make or view offers</p>
+                                {% if current_user.is_authenticated %}
+                                    <a href="{{ url_for('offers') }}" class="btn btn-sm btn-outline-success">View Offers</a>
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-success">Login</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card h-100 border-0">
+                            <div class="card-body text-center">
+                                <i class="fas fa-clipboard-list fa-2x text-success mb-3"></i>
+                                <h6>Order History</h6>
+                                <p class="text-muted small">Track your orders</p>
+                                {% if current_user.is_authenticated %}
+                                    <a href="{{ url_for('orders') }}" class="btn btn-sm btn-outline-success">View Orders</a>
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-success">Login</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
