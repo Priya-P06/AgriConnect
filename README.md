@@ -241,7 +241,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact 📧
 
-Project Link: https://agriconnect-neon.vercel.app/
+Project Link: [https://agriconnect-neon.vercel.app/](https://agriconnect-neon.vercel.app/)
 
 ---
 
